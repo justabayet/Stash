@@ -1,11 +1,6 @@
-import { OrbitControls } from '@react-three/drei'
-import { Canvas } from '@react-three/fiber'
 // import { Perf } from 'r3f-perf'
-import Experience from './App/Experience'
-import { KeyboardControls } from '@react-three/drei'
-import { Leva } from 'leva'
-import Hub from './Hub'
 import { Route, Routes } from 'react-router-dom'
+import Hub from './Hub'
 import Mirrors from './Pages/Mirrors'
 import WIP from './Pages/WIP'
 

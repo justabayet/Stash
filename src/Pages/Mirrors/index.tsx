@@ -1,8 +1,13 @@
 import HomeButton from '../../Components/HomeButton'
+import Scene from './Scene'
 
 function Mirrors(): JSX.Element {
   return (
-    <HomeButton />
+    <>
+      <HomeButton />
+
+      <Scene />
+    </>
   )
 }
 
