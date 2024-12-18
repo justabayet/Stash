@@ -18,15 +18,17 @@ function Scene(): JSX.Element {
       <FaceLandmarker>
         <Canvas
           camera={{
-            fov: 45,
-            near: 0.1,
+            fov: 90,
+            near: 0.001,
             far: 200,
             position: [0, 0, 1]
           }} >
 
+          <color attach="background" args={['black']} />
+
           <Experience />
 
-          <axesHelper />
+          {/* <axesHelper /> */}
 
           {/* <Experience /> */}
 

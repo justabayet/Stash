@@ -1,9 +1,13 @@
 import { FaceControls, useKeyboardControls } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { ElementRef, useEffect, useRef } from 'react'
-import { Mesh } from 'three'
+import { Color, Group, Vector3 } from 'three'
 import Frame from './Frame'
 
+const center = new Vector3(0, 0, -1)
+
+const NB_FRAMES = 10
+const frames = new Array(NB_FRAMES).fill(0)
 
 function Experience(): JSX.Element {
   const [sub] = useKeyboardControls()
@@ -15,7 +19,7 @@ function Experience(): JSX.Element {
         if (pressed) {
           const target = faceControlsRef.current?.computeTarget()
           // console.log(target?.rotation, target?.position.multiplyScalar(5))
-          console.log(target?.position.multiplyScalar(5).toArray())
+          console.log(target?.position.toArray())
         }
       }
     )
@@ -31,37 +35,47 @@ function Experience(): JSX.Element {
       }
     )
   }, [sub])
-  // const faceLandmarker = useFaceLandmarker()
 
-  // const { controls } = useThree()
-
-  // useFrame(() => {
-  //   console.log({ controls, faceLandmarker })
-  // })
   const faceControlsRef = useRef<ElementRef<typeof FaceControls>>(null)
-  const meshTarget = useRef<Mesh>(null)
+  const fixedFrameRef = useRef<Group>(null)
 
-  useFrame(() => {
+  useFrame(({ camera }) => {
     const target = faceControlsRef.current?.computeTarget()
     // console.log(target?.rotation, target?.position)
+    // console.log(fixedFrameRef.current)
     if (target) {
-      // console.log(target.position)
-      meshTarget.current?.position.copy(target.position).multiplyScalar(5)
+      camera.position.copy(target.position).setZ(1)
+      camera.lookAt(center)
+
+      if (fixedFrameRef.current) {
+        console.log(camera.rotation)
+        // fixedFrameRef.current.rotation.copy(target.rotation)
+        fixedFrameRef.current.lookAt(camera.position)
+        // fixedFrameRef.current.setRotationFromEuler(camera.rotation)
+        fixedFrameRef.current.position.setX(target.position.x)
+      }
+
     }
   })
   return (
     <>
-      <FaceControls ref={faceControlsRef} />
-      {/* <mesh ref={meshTarget}>
-        <boxGeometry></boxGeometry>
-      </mesh> */}
-      <Frame position-z={-0.1} />
-      <Frame />
-      <Frame position-z={0.1} />
-      <Frame position-z={0.2} />
-      <Frame position-z={0.3} />
-      <Frame position-z={0.4} />
-      <Frame position-z={0.5} />
+      <FaceControls ref={faceControlsRef} manualUpdate />
+
+      <mesh scale={0.1} position={[0, 0, 0.5]}>
+        <boxGeometry />
+        <meshBasicMaterial color={'blue'} />
+      </mesh >
+
+      {
+        frames.map((_, index) => {
+          const indexOffset = index
+          return <Frame
+            position-z={indexOffset * -1}
+            key={indexOffset}
+            color={indexOffset < 0 ? 'red' : new Color().setScalar((1.0 - (indexOffset / NB_FRAMES)) ** 3)
+            } />
+        })
+      }
     </>
   )
 }
